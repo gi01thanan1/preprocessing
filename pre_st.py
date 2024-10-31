@@ -31,7 +31,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 st.title(" :bar_chart: Healthcare Stroke dataset EDA and preprocessing")
 st.markdown('<style>div.block-container{padding-top:3rem;}</style>',unsafe_allow_html=True)
-df = pd.read_csv('healthcare-dataset-stroke-data.csv')
+df = pd.read_csv('datasets/healthcare-dataset-stroke-data.csv')
 #st.write(df)
 st.write(df.style.background_gradient(cmap="Blues"))
 
@@ -138,80 +138,80 @@ with st.expander("multi_variate Analysis"):
  
     # Display the plot in Streamlit
     st.pyplot(plot.fig)
-with st.expander("preprocessing"):
-    # train test split
+# with st.expander("preprocessing"):
+#     # train test split
     
-    X = df_stroke.drop(['stroke'], axis=1)
-    y = df_stroke['stroke']
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True, stratify=y, random_state=42)
-    #st.subheader('X_train after train_test_split:')
-    st.markdown("<h3 style='color:red;'>X_train after train_test_split</h3>", unsafe_allow_html=True)
-    st.write(X_train)
-    # handeling nans in body_mass_status(fill None values with Nan )
+#     X = df_stroke.drop(['stroke'], axis=1)
+#     y = df_stroke['stroke']
+#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=True, stratify=y, random_state=42)
+#     #st.subheader('X_train after train_test_split:')
+#     st.markdown("<h3 style='color:red;'>X_train after train_test_split</h3>", unsafe_allow_html=True)
+#     st.write(X_train)
+#     # handeling nans in body_mass_status(fill None values with Nan )
 
-    X_train[['body_mass_status']] = X_train[['body_mass_status']].fillna(value=np.nan)
-    X_test[['body_mass_status']] = X_test[['body_mass_status']].fillna(value=np.nan)
-    #  smoking_status, body_mass_status
-    ## handle their NaNs from train and test with simpleimputer
-    simple_imputer = SimpleImputer(strategy='most_frequent')
-    X_train[['smoking_status', 'body_mass_status']] = simple_imputer.fit_transform(X_train[['smoking_status', 'body_mass_status']])
-    X_test[['smoking_status', 'body_mass_status']] = simple_imputer.transform(X_test[['smoking_status', 'body_mass_status']])
-    # handle 'bmi' with KNNImputer
-    knn_imputer = KNNImputer(n_neighbors = 2)
-    X_train[['bmi']] = knn_imputer.fit_transform(X_train[['bmi']])
-    X_test[['bmi']] = knn_imputer.transform(X_test[['bmi']])
-    #st.subheader('Check nan values after handling:')
-    st.markdown("<h3 style='color:red;'>Check nan values after handling</h3>", unsafe_allow_html=True)
-    for j in X_train.columns:
-        no_null = X_train[j].isna().sum()
-        #st.markdown(f"check number of null values : {no_null})
-        st.markdown(f"no of null values in {j}: {no_null}")
-    #st.markdown(f'<p class="custom-markdown">Guess the fruit name , the word is: {n} characters</p>', unsafe_allow_html=True,help="Enter only one character then press add  , continue entering and pressing to get the complete word")
-    # d) Detect & Handle Outliers
-    # bmi , avg_glucose_level are right skewed
-    outlier_cols = ['bmi', 'avg_glucose_level']
-    for col in outlier_cols:
-        X_train[col] = np.log(X_train[col])
-        X_test[col] = np.log(X_test[col])
-    # Encoding
-    #nomenal : gender		ever_married	work_type	Residence_type		smoking_status   body_mass_status	glucose_status
-    #ordinal : 	
-    ohe_encoder = OneHotEncoder(sparse_output=False, drop='first')
-    result_train = ohe_encoder.fit_transform(X_train[['gender', 'ever_married','work_type','Residence_type','smoking_status','glucose_status']])
-    result_test = ohe_encoder.transform(X_test[['gender', 'ever_married','work_type','Residence_type','smoking_status','glucose_status']])
-    ohe_train_df = pd.DataFrame(result_train, columns=ohe_encoder.get_feature_names_out(), index=X_train.index)
-    ohe_test_df = pd.DataFrame(result_test, columns=ohe_encoder.get_feature_names_out(), index=X_test.index)
-    # binary encoding for 'body_mass_status'
-    bin_encoder = BinaryEncoder()
-    bi_train_df = bin_encoder.fit_transform(X_train[['body_mass_status']])
-    bi_test_df = bin_encoder.transform(X_test[['body_mass_status']])
-    # concat
-    X_train = pd.concat([X_train, ohe_train_df, bi_train_df], axis=1).drop(['gender', 'ever_married','work_type','Residence_type','smoking_status','glucose_status','body_mass_status'], axis=1)
-    X_test = pd.concat([X_test, ohe_test_df, bi_test_df], axis=1).drop(['gender', 'ever_married','work_type','Residence_type','smoking_status','glucose_status','body_mass_status'], axis=1)
-    # apply smote oversampling on x_train , y_train
-    smote = SMOTE(k_neighbors=2, random_state=42)
+#     X_train[['body_mass_status']] = X_train[['body_mass_status']].fillna(value=np.nan)
+#     X_test[['body_mass_status']] = X_test[['body_mass_status']].fillna(value=np.nan)
+#     #  smoking_status, body_mass_status
+#     ## handle their NaNs from train and test with simpleimputer
+#     simple_imputer = SimpleImputer(strategy='most_frequent')
+#     X_train[['smoking_status', 'body_mass_status']] = simple_imputer.fit_transform(X_train[['smoking_status', 'body_mass_status']])
+#     X_test[['smoking_status', 'body_mass_status']] = simple_imputer.transform(X_test[['smoking_status', 'body_mass_status']])
+#     # handle 'bmi' with KNNImputer
+#     knn_imputer = KNNImputer(n_neighbors = 2)
+#     X_train[['bmi']] = knn_imputer.fit_transform(X_train[['bmi']])
+#     X_test[['bmi']] = knn_imputer.transform(X_test[['bmi']])
+#     #st.subheader('Check nan values after handling:')
+#     st.markdown("<h3 style='color:red;'>Check nan values after handling</h3>", unsafe_allow_html=True)
+#     for j in X_train.columns:
+#         no_null = X_train[j].isna().sum()
+#         #st.markdown(f"check number of null values : {no_null})
+#         st.markdown(f"no of null values in {j}: {no_null}")
+#     #st.markdown(f'<p class="custom-markdown">Guess the fruit name , the word is: {n} characters</p>', unsafe_allow_html=True,help="Enter only one character then press add  , continue entering and pressing to get the complete word")
+#     # d) Detect & Handle Outliers
+#     # bmi , avg_glucose_level are right skewed
+#     outlier_cols = ['bmi', 'avg_glucose_level']
+#     for col in outlier_cols:
+#         X_train[col] = np.log(X_train[col])
+#         X_test[col] = np.log(X_test[col])
+#     # Encoding
+#     #nomenal : gender		ever_married	work_type	Residence_type		smoking_status   body_mass_status	glucose_status
+#     #ordinal : 	
+#     ohe_encoder = OneHotEncoder(sparse_output=False, drop='first')
+#     result_train = ohe_encoder.fit_transform(X_train[['gender', 'ever_married','work_type','Residence_type','smoking_status','glucose_status']])
+#     result_test = ohe_encoder.transform(X_test[['gender', 'ever_married','work_type','Residence_type','smoking_status','glucose_status']])
+#     ohe_train_df = pd.DataFrame(result_train, columns=ohe_encoder.get_feature_names_out(), index=X_train.index)
+#     ohe_test_df = pd.DataFrame(result_test, columns=ohe_encoder.get_feature_names_out(), index=X_test.index)
+#     # binary encoding for 'body_mass_status'
+#     bin_encoder = BinaryEncoder()
+#     bi_train_df = bin_encoder.fit_transform(X_train[['body_mass_status']])
+#     bi_test_df = bin_encoder.transform(X_test[['body_mass_status']])
+#     # concat
+#     X_train = pd.concat([X_train, ohe_train_df, bi_train_df], axis=1).drop(['gender', 'ever_married','work_type','Residence_type','smoking_status','glucose_status','body_mass_status'], axis=1)
+#     X_test = pd.concat([X_test, ohe_test_df, bi_test_df], axis=1).drop(['gender', 'ever_married','work_type','Residence_type','smoking_status','glucose_status','body_mass_status'], axis=1)
+#     # apply smote oversampling on x_train , y_train
+#     smote = SMOTE(k_neighbors=2, random_state=42)
 
-    X_train_resampled_smote, y_train_resampled_smote =  smote.fit_resample(X_train, y_train)
-    # standered scaler for age
-    std_scaler = StandardScaler()
-    X_train_resampled_smote_scaled = X_train_resampled_smote.copy()
-    x_test_scaled = X_test.copy()
-    X_train_resampled_smote_scaled[['age']] = std_scaler.fit_transform(X_train_resampled_smote_scaled[['age']])
-    x_test_scaled[['age']] = std_scaler.transform(x_test_scaled[['age']])
-    # robust scaler for bmi and avg_glucose_level
-    rbst_scaler = RobustScaler()
-    X_train_resampled_smote_scaled[['bmi', 'avg_glucose_level']] = rbst_scaler.fit_transform(X_train_resampled_smote_scaled[['bmi', 'avg_glucose_level']])
-    x_test_scaled[['bmi', 'avg_glucose_level']] = rbst_scaler.transform(x_test_scaled[['bmi', 'avg_glucose_level']])
-    #st.subheader("Final x_train after preprocessing:")
-    st.markdown("<h3 style='color:red;text-align:center;'>Final x_train after preprocessing</h3>", unsafe_allow_html=True)
-    st.write(X_train_resampled_smote_scaled)
-    # Download 4 files after preprocessing
-    downl = st.button("Download 4 files",key="dl")
-    if downl== True:
-        X_train_resampled_smote_scaled.to_csv("X_train_scaled_resampled_scaled.csv")
-        x_test_scaled.to_csv("X_test_scaled.csv")
-        y_train_resampled_smote.to_csv("y_train_resampled.csv")
-        y_test.to_csv("y_test.csv")
+#     X_train_resampled_smote, y_train_resampled_smote =  smote.fit_resample(X_train, y_train)
+#     # standered scaler for age
+#     std_scaler = StandardScaler()
+#     X_train_resampled_smote_scaled = X_train_resampled_smote.copy()
+#     x_test_scaled = X_test.copy()
+#     X_train_resampled_smote_scaled[['age']] = std_scaler.fit_transform(X_train_resampled_smote_scaled[['age']])
+#     x_test_scaled[['age']] = std_scaler.transform(x_test_scaled[['age']])
+#     # robust scaler for bmi and avg_glucose_level
+#     rbst_scaler = RobustScaler()
+#     X_train_resampled_smote_scaled[['bmi', 'avg_glucose_level']] = rbst_scaler.fit_transform(X_train_resampled_smote_scaled[['bmi', 'avg_glucose_level']])
+#     x_test_scaled[['bmi', 'avg_glucose_level']] = rbst_scaler.transform(x_test_scaled[['bmi', 'avg_glucose_level']])
+#     #st.subheader("Final x_train after preprocessing:")
+#     st.markdown("<h3 style='color:red;text-align:center;'>Final x_train after preprocessing</h3>", unsafe_allow_html=True)
+#     st.write(X_train_resampled_smote_scaled)
+#     # Download 4 files after preprocessing
+#     downl = st.button("Download 4 files",key="dl")
+#     if downl== True:
+#         X_train_resampled_smote_scaled.to_csv("X_train_scaled_resampled_scaled.csv")
+#         x_test_scaled.to_csv("X_test_scaled.csv")
+#         y_train_resampled_smote.to_csv("y_train_resampled.csv")
+#         y_test.to_csv("y_test.csv")
 
     
     
