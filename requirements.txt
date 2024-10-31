@@ -3,7 +3,7 @@ pandas
 plotly.express 
 plotly.figure_factory 
 seaborn 
-matplotlib.pyplot as plt
+matplotlib.pyplot 
 sklearn.model_selection import train_test_split
 numpy 
 sklearn.model_selection import train_test_split 
