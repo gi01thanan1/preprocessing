@@ -4,12 +4,23 @@ plotly.express
 plotly.figure_factory 
 seaborn 
 matplotlib.pyplot 
-sklearn.model_selection import train_test_split
+sklearn.model_selection 
+train_test_split
 numpy 
-sklearn.model_selection import train_test_split 
-sklearn.impute import SimpleImputer, KNNImputer 
-sklearn.preprocessing import OrdinalEncoder, LabelEncoder, OneHotEncoder 
-category_encoders import BinaryEncoder # Nominal Encoding 
-imblearn.under_sampling import RandomUnderSampler 
-imblearn.over_sampling import RandomOverSampler, SMOTE 
-sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
+sklearn.impute 
+SimpleImputer
+KNNImputer 
+sklearn.preprocessing
+OrdinalEncoder
+LabelEncoder
+OneHotEncoder 
+category_encoders
+BinaryEncoder 
+imblearn.under_sampling
+RandomUnderSampler 
+imblearn.over_sampling 
+RandomOverSampler
+SMOTE 
+StandardScaler
+MinMaxScaler
+RobustScaler
